@@ -15,8 +15,8 @@ spring:
       initial-size: 3
       max-wait: 5000
       stat-view-servlet:
-#        login-username: root
-#        login-password: 123456
+        #        login-username: root
+        #        login-password: 123456
         allow:
         deny:
         url-pattern: /druid/*
@@ -40,8 +40,14 @@ shiro:
     - /login/captcha*
     - /login/logout*
     - /pay/callback*/**
-#    - /system/upload/*
+    # /system/upload/*
     - /druid/**
+    # /swagger2*
+    - /doc.html
+    - /service-worker.js
+    - /swagger-resources/**
+    - /webjars/**
+    - /v2/**
   authc-urls:
     - /**
 #mybatisplus的配置
