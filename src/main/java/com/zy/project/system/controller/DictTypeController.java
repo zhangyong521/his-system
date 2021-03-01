@@ -82,4 +82,18 @@ public class DictTypeController {
         return AjaxResult.success(this.dictTypeService.list().getData());
     }
 
+    /**
+     * 同步缓存
+     */
+    @GetMapping("dictCacheAsync")
+    public AjaxResult dictCacheAsync(){
+        try {
+            this.dictTypeService.dictCacheAsync();
+            return AjaxResult.success();
+        }catch (Exception e){
+            System.out.println(e);
+            return AjaxResult.error();
+        }
+    }
+
 }

@@ -116,5 +116,5 @@ public interface Constants {
     /**
      * redis的字典前缀
      */
-    String DICT_REDIS_PREFIX="dict:";
+    String DICT_REDIS_PREFIX = "dict:";
 }

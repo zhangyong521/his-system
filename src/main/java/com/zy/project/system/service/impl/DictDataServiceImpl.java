@@ -35,6 +35,12 @@ public class DictDataServiceImpl implements DictDataService {
     @Autowired
     private StringRedisTemplate redisTemplate;
 
+    /**
+     * 之前是从数据库里面查询
+     * 因为我们做到redis的缓存，所以现在要去redis里面去查询
+     * @param dictType
+     * @return
+     */
     @Override
     public List<DictData> selectDictDataByDictType(String dictType) {
         if (StringUtils.isBlank(dictType)) {
@@ -44,12 +50,15 @@ public class DictDataServiceImpl implements DictDataService {
         String key = Constants.DICT_REDIS_PREFIX + dictType;
         ValueOperations<String, String> operations = redisTemplate.opsForValue();
         String json = operations.get(key);
-        if (StringUtils.isBlank(json)) { //说明redis里面没有
+        //说明redis里面没有
+        if (StringUtils.isBlank(json)) {
             QueryWrapper<DictData> qw = new QueryWrapper<>();
             qw.eq(DictData.COL_DICT_TYPE, dictType);
-            qw.eq(DictData.COL_STATUS, Constants.STATUS_TRUE);//必须有效
+            //必须有效
+            qw.eq(DictData.COL_STATUS, Constants.STATUS_TRUE);
             List<DictData> dictDataList = this.dictDataMapper.selectList(qw);
-            operations.set(key, JSON.toJSONString(dictDataList));//放入reis
+            //放入redis
+            operations.set(key, JSON.toJSONString(dictDataList));
             return dictDataList;
         } else {//说明redis里面有
             return JSON.parseArray(json, DictData.class);
@@ -101,4 +110,5 @@ public class DictDataServiceImpl implements DictDataService {
         }
         return 0;
     }
+
 }

@@ -2,15 +2,20 @@ package com.zy.project.system.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateUtil;
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zy.common.constants.Constants;
 import com.zy.common.vo.DataGridView;
+import com.zy.project.system.domain.DictData;
 import com.zy.project.system.domain.DictType;
 import com.zy.project.system.dto.DictTypeDto;
+import com.zy.project.system.mapper.DictDataMapper;
 import com.zy.project.system.mapper.DictTypeMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import com.zy.project.system.service.DictTypeService;
 
@@ -25,8 +30,15 @@ import java.util.List;
  */
 @Service
 public class DictTypeServiceImpl implements DictTypeService {
+
     @Autowired
     private DictTypeMapper dictTypeMapper;
+
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+
+    @Autowired
+    private DictDataMapper dictDataMapper;
 
     /**
      * 分页查询
@@ -111,6 +123,25 @@ public class DictTypeServiceImpl implements DictTypeService {
     @Override
     public DictType selectDictTypeById(Long dictId) {
         return this.dictTypeMapper.selectById(dictId);
+    }
+
+    /**
+     * 同步缓存
+     */
+    @Override
+    public void dictCacheAsync() {
+        //查询所有可用的dictType
+        QueryWrapper<DictType> qw = new QueryWrapper<>();
+        qw.ge(DictType.COL_STATUS, Constants.STATUS_TRUE);
+        List<DictType> dictTypes = this.dictTypeMapper.selectList(qw);
+        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+        for (DictType dictType : dictTypes) {
+            QueryWrapper<DictData> qdw = new QueryWrapper<>();
+            qdw.ge(DictData.COL_STATUS, Constants.STATUS_TRUE);
+            qdw.eq(DictData.COL_DICT_TYPE, dictType.getDictType());
+            List<DictData> dictData = dictDataMapper.selectList(qdw);
+            valueOperations.set(Constants.DICT_REDIS_PREFIX + dictType.getDictType(), JSON.toJSONString(dictData));
+        }
     }
 
 }
