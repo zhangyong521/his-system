@@ -1,5 +1,7 @@
 package com.zy.project.system.controller;
 
+import com.zy.common.aspectj.annotation.Log;
+import com.zy.common.aspectj.enums.BusinessType;
 import com.zy.common.utils.ShiroSecurityUtils;
 import com.zy.common.vo.AjaxResult;
 import com.zy.common.vo.DataGridView;
@@ -38,6 +40,7 @@ public class DictTypeController {
      * 添加
      */
     @PostMapping("addDictType")
+    @Log(title = "字典类型管理-添加", businessType = BusinessType.INSERT)
     public AjaxResult addDictType(@Validated DictTypeDto dictTypeDto) {
         if (dictTypeService.checkDictTypeUnique(dictTypeDto.getDictId(), dictTypeDto.getDictType())) {
             return AjaxResult.fail("新增字典【" + dictTypeDto.getDictName() + "】失败，字典类型已存在");
@@ -50,6 +53,7 @@ public class DictTypeController {
      * 修改
      */
     @PutMapping("updateDictType")
+    @Log(title = "字典类型管理-修改", businessType = BusinessType.UPDATE)
     public AjaxResult updateDictType(@Validated DictTypeDto dictTypeDto) {
         if (dictTypeService.checkDictTypeUnique(dictTypeDto.getDictId(), dictTypeDto.getDictType())) {
             return AjaxResult.fail("修改字典【" + dictTypeDto.getDictName() + "】失败，字典类型已存在");
@@ -70,6 +74,7 @@ public class DictTypeController {
      * 删除
      */
     @DeleteMapping("deleteDictTypeByIds/{dictIds}")
+    @Log(title = "字典类型管理-删除", businessType = BusinessType.DELETE)
     public AjaxResult updateDictType(@PathVariable @Validated @NotEmpty(message = "要删除的ID不能为空") Long[] dictIds) {
         return AjaxResult.toAjax(this.dictTypeService.deleteDictTypeByIds(dictIds));
     }
