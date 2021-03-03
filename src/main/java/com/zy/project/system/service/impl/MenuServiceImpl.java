@@ -84,4 +84,9 @@ public class MenuServiceImpl implements MenuService {
         return this.menuMapper.queryChildCountByMenuId(menuId) > 0L ? true : false;
     }
 
+    @Override
+    public List<Long> getMenusIdsByRoleId(Long roleId) {
+        return this.menuMapper.queryMenuIdsByRoleId(roleId);
+    }
+
 }

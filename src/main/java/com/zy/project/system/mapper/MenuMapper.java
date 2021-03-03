@@ -2,6 +2,9 @@ package com.zy.project.system.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.zy.project.system.domain.Menu;
+import io.lettuce.core.dynamic.annotation.Param;
+
+import java.util.List;
 
 
 /**
@@ -18,4 +21,12 @@ public interface MenuMapper extends BaseMapper<Menu> {
      * @return
      */
     Long queryChildCountByMenuId(Long menuId);
+
+    /**
+     * 根据角色ID查询所有选中的权限菜单ID【只查子节点的】
+     *
+     * @param roleId
+     * @return
+     */
+    List<Long> queryMenuIdsByRoleId(@Param("roleId") Long roleId);
 }
