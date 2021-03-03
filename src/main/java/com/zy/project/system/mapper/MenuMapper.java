@@ -11,4 +11,11 @@ import com.zy.project.system.domain.Menu;
  * @version 1.0
  */
 public interface MenuMapper extends BaseMapper<Menu> {
+    /**
+     * 根据菜单ID查询它的子节点个数
+     *
+     * @param menuId
+     * @return
+     */
+    Long queryChildCountByMenuId(Long menuId);
 }
